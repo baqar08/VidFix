@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Video Tools — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="container">
+      <div class="brand">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo" alt="logo"> 
+        <div>
+          <h1>Video Tools</h1>
+          <small>Fast & Simple Online Video Utilities</small>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="nav-link {{ 'active' if request.endpoint == 'index' else '' }}"
+          href="{{ url_for('index') }}">Dashboard</a>
+        <a class="nav-link {{ 'active' if request.endpoint == 'compress' else '' }}"
+          href="{{ url_for('compress') }}">Compress</a>
+        <a class="nav-link {{ 'active' if request.endpoint == 'convert' else '' }}"
+          href="{{ url_for('convert') }}">Convert</a>
+        <a class="nav-link {{ 'active' if request.endpoint == 'trim' else '' }}" href="{{ url_for('trim') }}">Trim</a>
+        <a class="nav-link {{ 'active' if request.endpoint == 'merge' else '' }}"
+          href="{{ url_for('merge') }}">Merge</a>
+        <a class="nav-link {{ 'active' if request.endpoint == 'speed' else '' }}"
+          href="{{ url_for('speed') }}">Speed</a>
+        <a class="nav-link {{ 'active' if request.endpoint == 'resolution' else '' }}"
+          href="{{ url_for('resolution') }}">Resolution</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alerts">
+      {% for m in messages %}
+      <div class="alert">{{ m }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div>Built with ❤️ using Flask + FFmpeg</div>
+  </footer>
+</body>
+
+</html>
