@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+  <h2>Professional Video Utilities</h2>
+  <p>Enhance your workflow with our suite of powerful, privacy-focused video processing tools. Simple, fast, and
+    elegant.</p>
+</div>
+
+<section class="grid">
+  <article class="card">
+    <h3>Compress</h3>
+    <p>Shrink video size while keeping good quality.</p>
+    <a class="card-btn" href="{{ url_for('compress') }}">Open</a>
+  </article>
+
+  <article class="card">
+    <h3>Convert to Audio</h3>
+    <p>Extract MP3/WAV/AAC/M4A from any video.</p>
+    <a class="card-btn" href="{{ url_for('convert') }}">Open</a>
+  </article>
+
+  <article class="card">
+    <h3>Trim</h3>
+    <p>Cut out the exact part you want.</p>
+    <a class="card-btn" href="{{ url_for('trim') }}">Open</a>
+  </article>
+
+  <article class="card">
+    <h3>Merge</h3>
+    <p>Combine multiple clips into one file.</p>
+    <a class="card-btn" href="{{ url_for('merge') }}">Open</a>
+  </article>
+
+  <article class="card">
+    <h3>Speed</h3>
+    <p>Speed up or slow down playback.</p>
+    <a class="card-btn" href="{{ url_for('speed') }}">Open</a>
+  </article>
+
+  <article class="card">
+    <h3>Resolution</h3>
+    <p>Convert to 1080p, 720p or custom resolution.</p>
+    <a class="card-btn" href="{{ url_for('resolution') }}">Open</a>
+  </article>
+</section>
+{% endblock %}
+
+
+
+
+
+
+
+
