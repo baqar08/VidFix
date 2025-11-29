@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+  <h2>Merge Videos</h2>
+  <p>Combine multiple video clips into a single seamless file.</p>
+</div>
+<form class="form-card tool-form" method="POST" enctype="multipart/form-data">
+  <label class="field">
+    <span>Select multiple videos (same codec/container recommended)</span>
+    <input type="file" name="videos" multiple accept="video/*" required>
+  </label>
+  <ul class="file-list"></ul>
+  <div class="form-actions">
+    <button class="btn-primary" type="submit">Merge</button>
+    <a class="btn-ghost" href="{{ url_for('index') }}">Back</a>
+  </div>
+</form>
+
+<script src="{{ url_for('static', filename='js/helpers.js') }}"></script>
+<script src="{{ url_for('static', filename='js/merge.js') }}"></script>
+{% endblock %}
