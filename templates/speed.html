@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+  <h2>Change Speed</h2>
+  <p>Adjust the playback speed to create slow-motion or timelapse effects.</p>
+</div>
+<form class="form-card tool-form" method="POST" enctype="multipart/form-data">
+  <label class="field">
+    <span>Select video</span>
+    <input type="file" name="video" accept="video/*" required>
+  </label>
+  <label class="field">
+    <span>Speed factor (e.g. 2.0 = 2x faster, 0.5 = half speed)</span>
+    <input type="number" name="factor" step="0.1" min="0.1" value="1.0">
+  </label>
+  <div class="form-actions">
+    <button class="btn-primary" type="submit">Apply</button>
+    <a class="btn-ghost" href="{{ url_for('index') }}">Back</a>
+  </div>
+</form>
+
+<script src="{{ url_for('static', filename='js/helpers.js') }}"></script>
+<script src="{{ url_for('static', filename='js/speed.js') }}"></script>
+{% endblock %}
