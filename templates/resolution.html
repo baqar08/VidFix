@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+    <h2>change resolution</h2>
+    <p>resize your video to standardor custom dimentions.</p>
+</div>
+<form class="form-card tool-farm" methods="POST" enctype="multipart/form-data">
+    <label class="field">
+        <span>select video</span>
+        <input type="file" na,e="video" accept="video/*" required>
+    </label>
+    <label class="field">
+        <span>Resolution (WIDTHxHEIGHT)</span>
+        <input type="text" name="resolution" value="1280x720" placehlder="1280x720">
+    </label>
+    <div class="form-actions">
+        <button class="btn-primary" type="submit">Convert</button>
+        <a class="btn-ghost" href="{{ url_for('index') }}">back</a>
+    </div>
+</form>
+
+<script src="{{ url_for('static', filename='js/helpers.js') }}"></script>
+<script src="{{ url_for('static', filename='js/resolution.js') }}"></script>
+{% endblock %}
+
+
