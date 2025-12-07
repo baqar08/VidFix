@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+  <h2>Trim Video</h2>
+  <p>Cut and keep only the most important parts of your video.</p>
+</div>
+<form class="form-card tool-form" method="POST" enctype="multipart/form-data">
+  <label class="field">
+    <span>Select video</span>
+    <input type="file" name="video" accept="video/*" required>
+  </label>
+  <label class="field">
+    <span>Start Time (seconds or HH:MM:SS)</span>
+    <input type="text" name="start" placeholder="0">
+  </label>
+  <label class="field">
+    <span>End Time (seconds or HH:MM:SS)</span>
+    <input type="text" name="end" placeholder="10">
+  </label>
+  <div class="form-actions">
+    <button class="btn-primary" type="submit">Trim</button>
+    <a class="btn-ghost" href="{{ url_for('index') }}">Back</a>
+  </div>
+</form>
+
+<script src="{{ url_for('static', filename='js/helpers.js') }}"></script>
+<script src="{{ url_for('static', filename='js/trim.js') }}"></script>
+{% endblock %}
