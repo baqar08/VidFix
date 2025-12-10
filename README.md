@@ -43,7 +43,7 @@
 
 A showcase video demonstrating the features of the Video Tools App.
 
-🎥 [DEMO VIDEO](https://drive.google.com/file/d/1poD1TAWpRU9_zm3c3Z0zMiyjXelt7aQ-/view?usp=sharing)
+🎥 [DEMO VIDEO](https://drive.google.com/file/d/1T_7wxPcEWBimwSPqJluWQCQUjsfP72xq/view?usp=sharing)
 
 ## Local Setup and Installation
 
