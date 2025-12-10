@@ -7,6 +7,7 @@ from flask import (
     send_from_directory, flash, abort
 )
 from werkzeug.utils import secure_filename
+import json
 
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = BASE_DIR / "uploads"
@@ -37,6 +38,28 @@ def run_ffmpeg(cmd: list):
     except subprocess.CalledProcessError as e:
         stderr = e.stderr or e.stdout or str(e)
         raise RuntimeError(stderr.strip())
+
+def get_file_info(path: str):
+    """Returns (duration_in_seconds, has_audio_bool)"""
+    cmd = [
+        "ffprobe", "-v", "error", "-select_streams", "a",
+        "-show_entries", "stream=codec_type", "-of", "csv=p=0", str(path)
+    ]
+    try:
+        # Check for audio streams
+        res = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        has_audio = len(res.stdout.strip()) > 0
+        
+        # Get duration
+        cmd_dur = [
+            "ffprobe", "-v", "error", "-show_entries", "format=duration",
+            "-of", "default=noprint_wrappers=1:nokey=1", str(path)
+        ]
+        res_dur = subprocess.run(cmd_dur, capture_output=True, text=True, check=True)
+        duration = float(res_dur.stdout.strip())
+        return duration, has_audio
+    except Exception:
+        return 0, False
 
 def save_upload(file_storage) -> str:
     filename = unique_filename(file_storage.filename)
@@ -134,7 +157,8 @@ def trim():
     cmd = ["ffmpeg", "-y", "-i", in_path, "-ss", start]
     if end:
         cmd += ["-to", end]
-    cmd += ["-c", "copy", str(out_path)]
+    # Use re-encoding for accurate trimming (frame-perfect) instead of stream copy
+    cmd += ["-c:v", "libx264", "-c:a", "aac", str(out_path)]
 
     try:
         run_ffmpeg(cmd)
@@ -163,24 +187,55 @@ def merge():
         flash("No valid files uploaded.")
         return redirect(request.url)
 
-    list_file = Path(app.config["UPLOAD_DIR"]) / f"{uid}_list.txt"
-    with list_file.open("w", encoding="utf-8") as fh:
-        for p in saved:
-            fh.write(f"file '{p}'\n")
-
     out_name = f"{uid}_merged.mp4"
     out_path = Path(app.config["PROCESSED_DIR"]) / out_name
-    cmd = ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(list_file), "-c", "copy", str(out_path)]
+
+    # Use filter_complex to scale and concatenate videos, ensuring robust merging 
+    # even if input files have different resolutions or codecs.
+    # We normalize everything to 1280x720. 
+    target_w = 1280
+    target_h = 720
+
+    cmd = ["ffmpeg", "-y"]
+    filter_parts = []
+    concat_segments = []
+    
+    for i, p in enumerate(saved):
+        cmd.extend(["-i", p])
+        
+        # Get file info to handle missing audio
+        duration, has_audio = get_file_info(p)
+        
+        # Scale video (v{i})
+        filter_parts.append(
+            f"[{i}:v]scale={target_w}:{target_h}:force_original_aspect_ratio=decrease,"
+            f"pad={target_w}:{target_h}:-1:-1,setsar=1[v{i}];"
+        )
+        
+        # Handle audio (a{i})
+        if has_audio:
+            # Use existing audio, ensure stereo/44100 for consistency
+            filter_parts.append(f"[{i}:a]aformat=sample_rates=44100:channel_layouts=stereo[a{i}];")
+        else:
+            # Generate silence of exact duration
+            filter_parts.append(f"anullsrc=channel_layout=stereo:sample_rate=44100:d={duration}[a{i}];")
+            
+        concat_segments.append(f"[v{i}][a{i}]")
+    
+    concat_str = "".join(concat_segments)
+    
+    filter_complex = "".join(filter_parts) + \
+                     f"{concat_str}concat=n={len(saved)}:v=1:a=1[v][a]"
+    
+    cmd.extend(["-filter_complex", filter_complex, "-map", "[v]", "-map", "[a]", 
+                "-c:v", "libx264", "-c:a", "aac", str(out_path)])
+
     try:
         run_ffmpeg(cmd)
     except RuntimeError as e:
         flash(f"Merge failed: {e}")
         return redirect(request.url)
-    finally:
-        try:
-            list_file.unlink()
-        except Exception:
-            pass
+
 
     return redirect(url_for("download_file", filename=out_name))
 
