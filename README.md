@@ -45,6 +45,8 @@ A showcase video demonstrating the features of the Video Tools App.
 
 🎥 [DEMO VIDEO](https://drive.google.com/file/d/1T_7wxPcEWBimwSPqJluWQCQUjsfP72xq/view?usp=sharing)
 
+### Live Demo [Link](https://baqar.pythonanywhere.com/)
+
 ## Local Setup and Installation
 
 Follow these steps to get the application running on your local machine.
